@@ -7,8 +7,6 @@
     * Error handling & Debugging
     * `.xml` configuration
 * **Details**
-    * You are provided with a set of [JDBC](https://www.baeldung.com/java-jdbc) utility classes located in the package `utils.jdbc`.
-    * Most of the project's design and implementation has been considered for you.
     * **Milestone 1** - configure this project to connect to `mariadb` rather than `mysql`
     * **Milestone 2** - create a console (or graphical) interface to `add`, `remove`, `update`, and `get` a respective entity from a respective table from a respective database.   
     
