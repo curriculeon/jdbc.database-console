@@ -1,16 +1,24 @@
-# Project Title
+# JDBC Database Console
 
-* **Objective** - To create a product...
-* **Purpose** - To gain familiarity the following features...
+### Description
+* **Objective** - To implement a console interface capable of prompting a user to populate a respective table in a respective database.
+* **Purpose** - To establish familiarity with
+    * Java Database Connections
+    * Error handling & Debugging
+    * `.xml` configuration
+* **Details**
+    * You are provided with a set of [JDBC](https://www.baeldung.com/java-jdbc) utility classes located in the package `utils.jdbc`.
+    * Most of the project's design and implementation has been considered for you.
+    * **Milestone 1** - configure this project to connect to `mariadb` rather than `mysql`
+    * **Milestone 2** - create a console (or graphical) interface to `add`, `remove`, `update`, and `get` a respective entity from a respective table from a respective database.   
+    
 
+    
 
-
-
-## Objective
-
-#### Part 1 - ...
-* Ensure that all test cases in `com.github.perscholas_edu` pass with 100% success rate. 
-
+### Configuring Environment
+* Ensure you have `MySQL` installed.
+    * This project's current `MySQL` version can be found by viewing its `pom.xml`
+    * Your machine's current `MySQL` version can be found by executing `SELECT VERSION()`
 
 
 
