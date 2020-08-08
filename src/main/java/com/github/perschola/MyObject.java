@@ -1,13 +1,13 @@
 package com.github.perschola;
 
 import java.sql.*;
-import com.mysql.cj.jdbc.Driver;
+
 import java.util.StringJoiner;
 
 public class MyObject implements Runnable {
     public void run() {
         registerJDBCDriver();
-        Connection mysqlDbConnection = getConnection("mysql");
+        Connection mysqlDbConnection = getConnection("mariadb");
 
         executeStatement(mysqlDbConnection, "DROP DATABASE IF EXISTS databaseName;");
         executeStatement(mysqlDbConnection, "CREATE DATABASE IF NOT EXISTS databaseName;");
@@ -32,18 +32,18 @@ public class MyObject implements Runnable {
     void registerJDBCDriver() {
         // Attempt to register JDBC Driver
         try {
-            DriverManager.registerDriver(Driver.class.newInstance());
-        } catch (InstantiationException | IllegalAccessException | SQLException e1) {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch ( ClassNotFoundException e1) {
             throw new Error(e1);
         }
     }
 
     public Connection getConnection(String dbVendor) {
-        String username = "root";
-        String password = "";
-        String url = "jdbc:" + dbVendor + "://127.0.0.1/";
+        String username = "admin";
+        String password = "password";
+        String url = "jdbc:" + dbVendor + "://localhost:3306/userdatabase?user=admin&password=password";
         try {
-            return DriverManager.getConnection(url, username, password);
+            return DriverManager.getConnection(url);
         } catch (SQLException e) {
             throw new Error(e);
         }
