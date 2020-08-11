@@ -12,7 +12,6 @@ public class MySqlConnection implements Runnable {
         registerJDBCDriver();
         Connection mysqlDbConnection = getConnection("mariadb");
 
-        executeStatement(mysqlDbConnection, "DROP DATABASE IF EXISTS userdatabase;");
         executeStatement(mysqlDbConnection, "CREATE DATABASE IF NOT EXISTS userdatabase;");
         executeStatement(mysqlDbConnection, "USE userdatabase;");
         executeStatement(mysqlDbConnection, new StringBuilder()
@@ -22,10 +21,6 @@ public class MySqlConnection implements Runnable {
                 .append("primary_type int not null,")
                 .append("secondary_type int null);").toString());
 
-        executeStatement(mysqlDbConnection, new StringBuilder()
-                .append("INSERT INTO userdatabase.pokemonTable ")
-                .append("(id, name, primary_type, secondary_type)")
-                .append(" VALUES (12, 'Ivysaur', 3, 7);").toString());
         String userInput = "";
         do{
               userInput = console.getStringInput("Select from the following options: " +
