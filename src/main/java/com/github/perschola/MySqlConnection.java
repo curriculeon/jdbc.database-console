@@ -44,7 +44,7 @@ public class MySqlConnection implements Runnable {
     void registerJDBCDriver() {
         // Attempt to register JDBC Driver
         try {
-            Class.forName("org.mariadb.jdbc.Driver");
+            Class.forName(Driver.class.getName());
         } catch ( ClassNotFoundException e1) {
             throw new Error(e1);
         }
@@ -53,9 +53,9 @@ public class MySqlConnection implements Runnable {
     public Connection getConnection(String dbVendor) {
         String username = "admin";
         String password = "password";
-        String url = "jdbc:" + dbVendor + "://localhost:3306/userdatabase?user=admin&password=password";
+        String url = "jdbc:" + dbVendor + "://localhost:3306/userdatabase?";
         try {
-            return DriverManager.getConnection(url);
+            return DriverManager.getConnection(url,username,password);
         } catch (SQLException e) {
             throw new Error(e);
         }
@@ -76,11 +76,7 @@ public class MySqlConnection implements Runnable {
             ResultSetMetaData metaData = resultSet.getMetaData();
             while(resultSet.next())
             for(int i = 1; i <= metaData.getColumnCount();i ++)
-                console.println(metaData.getColumnName(i) + ": " + resultSet.getString(i));
-
-            console.println("");
-
-
+                console.println(metaData.getColumnName(i) + ": " + resultSet.getString(i) );
         } catch (SQLException e) {
             throw new Error(e);
         }
