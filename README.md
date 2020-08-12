@@ -7,7 +7,7 @@
     * Error handling & Debugging
     * `.xml` configuration
 * **Details**
-    * **Milestone 1** - configure this project to connect to `mariadb` rather than `mysql`
+    * **Milestone 1** - configure this project to connect to `mysql` rather than `mariadb`
     * **Milestone 2** - create a console (or graphical) interface to `add`, `remove`, `update`, and `get` a respective entity from a respective table from a respective database.   
     
 
