@@ -33,6 +33,7 @@ public class MyObject implements Runnable {
         // Attempt to register JDBC Driver
         try {
             DriverManager.registerDriver(Driver.class.newInstance());
+            //Class.forName(Driver.class.getName());
         } catch (InstantiationException | IllegalAccessException | SQLException e1) {
             throw new Error(e1);
         }
@@ -41,7 +42,8 @@ public class MyObject implements Runnable {
     public Connection getConnection(String dbVendor) {
         String username = "root";
         String password = "";
-        String url = "jdbc:" + dbVendor + "://127.0.0.1/";
+        String url = "jdbc:" + dbVendor + "://localhost:3306/?serverTimezone=UTC&useLegacyDatetimeCode=false";
+        //String url = "jdbc:" + dbVendor + "://127.0.0.1/";
         try {
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
