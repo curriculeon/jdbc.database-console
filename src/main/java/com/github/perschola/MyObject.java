@@ -8,6 +8,7 @@ public class MyObject implements Runnable {
     public void run() {
         registerJDBCDriver();
         Connection mysqlDbConnection = getConnection("mysql");
+        System.out.println(mysqlDbConnection);
 
         executeStatement(mysqlDbConnection, "DROP DATABASE IF EXISTS databaseName;");
         executeStatement(mysqlDbConnection, "CREATE DATABASE IF NOT EXISTS databaseName;");
@@ -40,8 +41,9 @@ public class MyObject implements Runnable {
 
     public Connection getConnection(String dbVendor) {
         String username = "root";
-        String password = "";
-        String url = "jdbc:" + dbVendor + "://127.0.0.1/";
+        String password = "DakshaHello";
+        String url = "jdbc:" + dbVendor + "://127.0.0.1:3306/classicmodels?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+        System.out.println(url);
         try {
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
