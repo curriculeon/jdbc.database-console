@@ -5,7 +5,7 @@ import java.util.StringJoiner;
 
 public class MyObject implements Runnable {
     IOConsole console = new IOConsole();
-    Connection mysqlDbConnection = getConnection("mariadb");;
+    Connection mysqlDbConnection = getConnection("mariadb");
     public void run() {
         registerJDBCDriver();
 
@@ -28,6 +28,8 @@ public class MyObject implements Runnable {
         String query = "SELECT * FROM databaseName.pokemonTable;";
         ResultSet resultSet = executeQuery(query);
         printResults(resultSet);
+        addEntityToTable();
+        getEntityField();
     }
 
     void registerJDBCDriver() {
@@ -96,13 +98,44 @@ public class MyObject implements Runnable {
         }
     }
 
-    public void  addToTable(Connection connection){
+    public void  addEntityToTable(){
+        String tableName, id, name, primary_type, secondary_type;
+        tableName = console.getStringInput("Select table");
+        id = console.getStringInput("Enter userId");
+        name = console.getStringInput("Enter user name");
+        primary_type = console.getStringInput("Enter a primary number");
+        secondary_type = console.getStringInput("Enter a secondary number");
+        String sqlQuery = "INSERT INTO pokemontable (id, name, primary_type, secondary_type) Values (" + id + ",'" + name + "'," + primary_type
+                + "," + secondary_type + ") ";
+        executeStatement(sqlQuery);
     }
 
-    public void removeFromTable(){}
+    public void removeEntityFromTable(){
+        String tableName, id;
+        tableName = console.getStringInput("Enter table to delete user");
+        id = console.getStringInput(" Enter the id of a user to remove user");
+        String sqlQuery = "DELETE FROM " + tableName + " WHERE  id = " + id;
+        executeStatement(sqlQuery);
+    }
 
-    public void updateTable(){}
+    public void updateEntityTable(){
+        String id, primary_type, tableName;
+        tableName = console.getStringInput("Enter table to delete user");
+        id = console.getStringInput(" Enter user id to update primary type");
+        primary_type = console.getStringInput("Enter a new primary type number");
+        String sqlQuery = "UPDATE " + tableName + "SET " + "primary_type = " + primary_type +" WHERE  id = " + id;
+        executeStatement(sqlQuery);
+    }
 
-    public void getField(){}
+    public void getEntityField(){
+        String tableName, id;
+        tableName = console.getStringInput("Enter table:");
+        id = console.getStringInput("Enter user id " );
+        String sqlQuery = "SELECT * FROM " + tableName + " WHERE id = " + id + ";";
+        ResultSet resultSet = executeQuery(sqlQuery);
+        printResults(resultSet);
+
+
+    }
 
 }
