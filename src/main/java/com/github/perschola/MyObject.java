@@ -1,15 +1,16 @@
 package com.github.perschola;
 
+
 import java.sql.*;
-import com.mysql.cj.jdbc.Driver;
 import java.util.StringJoiner;
 
+
 public class MyObject implements Runnable {
+    IOConsole console = new IOConsole();
     public void run() {
         registerJDBCDriver();
         Connection mysqlDbConnection = getConnection("mysql");
 
-        executeStatement(mysqlDbConnection, "DROP DATABASE IF EXISTS databaseName;");
         executeStatement(mysqlDbConnection, "CREATE DATABASE IF NOT EXISTS databaseName;");
         executeStatement(mysqlDbConnection, "USE databaseName;");
         executeStatement(mysqlDbConnection, new StringBuilder()
@@ -40,7 +41,8 @@ public class MyObject implements Runnable {
 
     public Connection getConnection(String dbVendor) {
         String username = "root";
-        String password = "";
+        String password = System.getenv("JBDC_PASSWORD");
+
         String url = "jdbc:" + dbVendor + "://127.0.0.1/";
         try {
             return DriverManager.getConnection(url, username, password);
