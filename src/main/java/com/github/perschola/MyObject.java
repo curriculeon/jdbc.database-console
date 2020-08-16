@@ -33,6 +33,7 @@ public class MyObject implements Runnable {
         // Attempt to register JDBC Driver
         try {
             DriverManager.registerDriver(Driver.class.newInstance());
+            //Class.forName(Driver.class.getName());
         } catch (InstantiationException | IllegalAccessException | SQLException e1) {
             throw new Error(e1);
         }
