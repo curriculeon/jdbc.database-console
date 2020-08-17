@@ -1,43 +1,31 @@
 package com.github.perschola;
 
 import java.sql.*;
+
 import com.mysql.cj.jdbc.Driver;
-import java.util.StringJoiner;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 
 public class MyObject implements Runnable {
+    Scanner scanner = new Scanner(System.in);
+    List<Pokemon> pokemonList = new ArrayList<>();
+    //PokemonDAOImpl pokemonDAO = new PokemonDAOImpl();
+
     public void run() {
-        registerJDBCDriver();
-        Connection mysqlDbConnection = getConnection("mysql");
+        promptUser();
 
-
-        executeStatement(mysqlDbConnection, "DROP DATABASE IF EXISTS databaseName;");
-        executeStatement(mysqlDbConnection, "CREATE DATABASE IF NOT EXISTS databaseName;");
-        executeStatement(mysqlDbConnection, "USE databaseName;");
-        executeStatement(mysqlDbConnection, new StringBuilder()
-                .append("CREATE TABLE IF NOT EXISTS databaseName.pokemonTable(")
-                .append("id int auto_increment primary key,")
-                .append("name text not null,")
-                .append("primary_type int not null,")
-                .append("secondary_type int null);").toString());
-
-        executeStatement(mysqlDbConnection, new StringBuilder()
-                .append("INSERT INTO databaseName.pokemonTable ")
-                .append("(id, name, primary_type, secondary_type)")
-                .append(" VALUES (12, 'Ivysaur', 3, 7);").toString());
-
-        String query = "SELECT * FROM databaseName.pokemonTable;";
-        ResultSet resultSet = executeQuery(mysqlDbConnection, query);
-        printResults(resultSet);
     }
 
     void registerJDBCDriver() {
         // Attempt to register JDBC Driver
-//        try {
-//            DriverManager.registerDriver(Driver.class.newInstance());
-//        } catch (InstantiationException | IllegalAccessException | SQLException e1) {
-//            throw new Error(e1);
-//        }
+        try {
+            DriverManager.registerDriver(Driver.class.newInstance());
+        } catch (InstantiationException | IllegalAccessException | SQLException e1) {
+            throw new Error(e1);
+        }
     }
 
     public Connection getConnection(String dbVendor) {
@@ -61,23 +49,6 @@ public class MyObject implements Runnable {
         }
     }
 
-    public void printResults(ResultSet resultSet) {
-        try {
-            for (Integer rowNumber = 0; resultSet.next(); rowNumber++) {
-                String firstColumnData = resultSet.getString(1);
-                String secondColumnData = resultSet.getString(2);
-                String thirdColumnData = resultSet.getString(3);
-                System.out.println(new StringJoiner("\n")
-                        .add("Row number = " + rowNumber.toString())
-                        .add("First Column = " + firstColumnData)
-                        .add("Second Column = " + secondColumnData)
-                        .add("Third column = " + thirdColumnData)
-                        .toString());
-            }
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
-    }
 
     void executeStatement(Connection connection, String sqlStatement) {
         try {
@@ -96,5 +67,65 @@ public class MyObject implements Runnable {
             throw new Error(e);
         }
     }
+
+    public void promptUser() {
+        String option;
+        do {
+            System.out.println("Do you want to add/remove/update/get/quit Pokemon details?");
+            option= scanner.nextLine();
+            switch (option) {
+                case "add":
+                    insert();
+                    break;
+                case "remove":
+                    removePokemonByName();
+                    break;
+                case "update":
+                    updatePokemonById();
+                    break;
+                case "get":
+                    getPokemonDetails();
+                    break;
+                case "quit": break;
+            }
+        }while(!("quit".equals(option)));
+
+    }
+
+    private void getPokemonDetails() {
+        System.out.println("Enter name of the pokemon character to be viewed");
+        String pokemonName = scanner.nextLine();
+        //TODO
+    }
+
+    private void updatePokemonById() {
+        System.out.println("Enter Id of the pokemon character to be updated");
+        Integer pokemonName = scanner.nextInt();
+        //TODO
+    }
+
+    private void removePokemonByName() {
+        System.out.println("Enter name of the pokemon character to be removed");
+        String pokemonName = scanner.nextLine();
+        //TODO
+    }
+
+    private void insert() {
+        System.out.println("Enter name of the pokemon character");
+        String pokemonName = scanner.nextLine();
+        System.out.println("Enter primary type of the pokemon character");
+        Integer pokemonPrimaryType = Integer.valueOf(scanner.nextLine());
+        System.out.println("Enter primary type of the pokemon character");
+        Integer pokemonSecondaryType = Integer.valueOf(scanner.nextLine());
+
+        Pokemon pokemon = new Pokemon(pokemonName, pokemonPrimaryType, pokemonSecondaryType);
+        pokemonList.add(pokemon);
+        boolean success =  new PokemonDAOImpl().addPokemon(pokemonList);
+        if (success) {
+            System.out.println("Pokemon stored successfully");
+        }
+
+    }
+
 
 }
