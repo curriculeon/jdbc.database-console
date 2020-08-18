@@ -40,8 +40,8 @@ public class MyObject implements Runnable {
 
     public Connection getConnection(String dbVendor) {
         String username = "root";
-        String password = "";
-        String url = "jdbc:" + dbVendor + "://127.0.0.1/";
+        String password = "Nikolaev@71";
+        String url = "jdbc:" + dbVendor + "://localhost:3307?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
         try {
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
