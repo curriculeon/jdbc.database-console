@@ -4,6 +4,12 @@ import java.sql.*;
 import com.mysql.cj.jdbc.Driver;
 import java.util.StringJoiner;
 
+/**
+ * Implemented by Monica Deshmukh
+ * 8/23/2020
+ * Implemented CRUD operations using JDBC API
+ */
+
 public class MyObject1 implements Runnable {
     public void run() {
         registerJDBCDriver();
@@ -20,14 +26,36 @@ public class MyObject1 implements Runnable {
                 .append("address text not null,")
                 .append("phoneNumber int);").toString());
 
+        //INSERT statement
         executeStatement(mysqlDbConnection, new StringBuilder()
                 .append("INSERT INTO databaseName.accounts")
                 .append("(accountNumber, customerName, email, address, phoneNumber)")
                 .append(" VALUES (111, 'monica', 'monica@gmail.com', '1 happy ln, HS 23059', 1234567890);").toString());
 
-        String query = "SELECT * FROM databaseName.accounts;";
-        ResultSet resultSet = executeQuery(mysqlDbConnection, query);
-        printResults(resultSet);
+        //display results of Insert operation
+        System.out.println("\n After INSERT Statement:");
+        displayResults(mysqlDbConnection);
+
+        //UPDATE statement
+        executeStatement(mysqlDbConnection, new StringBuilder()
+                .append("UPDATE databaseName.accounts")
+                .append(" SET address = 'updated happy lane, HS 23059' ")
+                .append("WHERE accountNumber = 111;")
+                .toString());
+
+        //display results of Update operation
+        System.out.println("\n After UPDATE Statement:");
+        displayResults(mysqlDbConnection);
+
+        //DELETE statement
+        executeStatement(mysqlDbConnection, new StringBuilder()
+                .append("DELETE FROM databaseName.accounts ")
+                .append("WHERE accountNumber = 111;")
+                .toString());
+
+        //display results of Delete operation
+        System.out.println("\n After DELETE Statement:");
+        displayResults(mysqlDbConnection);
     }
 
     void registerJDBCDriver() {
@@ -62,7 +90,9 @@ public class MyObject1 implements Runnable {
 
     public void printResults(ResultSet resultSet) {
         try {
-            for (Integer rowNumber = 0; resultSet.next(); rowNumber++) {
+            Integer rowNumber = 0;  //check to see if resultSet has any rows
+            //for (Integer rowNumber = 0; resultSet.next(); rowNumber++) {
+            for (; resultSet.next(); rowNumber++) {
                 String accountNumber = resultSet.getString(1);
                 String customerName = resultSet.getString(2);
                 String email = resultSet.getString(3);
@@ -77,6 +107,8 @@ public class MyObject1 implements Runnable {
                         .add("phoneNumber = " + phoneNumber)
                         .toString());
             }
+            if (rowNumber < 1)
+                System.out.println("No rows selected");
         } catch (SQLException e) {
             throw new Error(e);
         }
@@ -100,4 +132,9 @@ public class MyObject1 implements Runnable {
         }
     }
 
+    public void displayResults(Connection mysqlDbConnection){
+        String query = "SELECT * FROM databaseName.accounts;";
+        ResultSet resultSet = executeQuery(mysqlDbConnection, query);
+        printResults(resultSet);
+    }
 }
