@@ -4,7 +4,7 @@ import java.sql.*;
 import com.mysql.cj.jdbc.Driver;
 import java.util.StringJoiner;
 
-public class MyObject implements Runnable {
+public class MyObject1 implements Runnable {
     public void run() {
         registerJDBCDriver();
         Connection mysqlDbConnection = getConnection("mysql");
@@ -13,18 +13,19 @@ public class MyObject implements Runnable {
         executeStatement(mysqlDbConnection, "CREATE DATABASE IF NOT EXISTS databaseName;");
         executeStatement(mysqlDbConnection, "USE databaseName;");
         executeStatement(mysqlDbConnection, new StringBuilder()
-                .append("CREATE TABLE IF NOT EXISTS databaseName.pokemonTable(")
-                .append("id int auto_increment primary key,")
-                .append("name text not null,")
-                .append("primary_type int not null,")
-                .append("secondary_type int null);").toString());
+                .append("CREATE TABLE IF NOT EXISTS databaseName.accounts(")
+                .append("accountNumber int primary key,")
+                .append("customerName text not null,")
+                .append("email text not null,")
+                .append("address text not null,")
+                .append("phoneNumber int);").toString());
 
         executeStatement(mysqlDbConnection, new StringBuilder()
-                .append("INSERT INTO databaseName.pokemonTable ")
-                .append("(id, name, primary_type, secondary_type)")
-                .append(" VALUES (12, 'Ivysaur', 3, 7);").toString());
+                .append("INSERT INTO databaseName.accounts")
+                .append("(accountNumber, customerName, email, address, phoneNumber)")
+                .append(" VALUES (111, 'monica', 'monica@gmail.com', '1 happy ln, HS 23059', 1234567890);").toString());
 
-        String query = "SELECT * FROM databaseName.pokemonTable;";
+        String query = "SELECT * FROM databaseName.accounts;";
         ResultSet resultSet = executeQuery(mysqlDbConnection, query);
         printResults(resultSet);
     }
@@ -62,14 +63,18 @@ public class MyObject implements Runnable {
     public void printResults(ResultSet resultSet) {
         try {
             for (Integer rowNumber = 0; resultSet.next(); rowNumber++) {
-                String firstColumnData = resultSet.getString(1);
-                String secondColumnData = resultSet.getString(2);
-                String thirdColumnData = resultSet.getString(3);
+                String accountNumber = resultSet.getString(1);
+                String customerName = resultSet.getString(2);
+                String email = resultSet.getString(3);
+                String address = resultSet.getString(4);
+                String phoneNumber = resultSet.getString(5);
                 System.out.println(new StringJoiner("\n")
                         .add("Row number = " + rowNumber.toString())
-                        .add("First Column = " + firstColumnData)
-                        .add("Second Column = " + secondColumnData)
-                        .add("Third column = " + thirdColumnData)
+                        .add("accountNumber = " + accountNumber)
+                        .add("customerName = " + customerName)
+                        .add("email = " + email)
+                        .add("address = " + address)
+                        .add("phoneNumber = " + phoneNumber)
                         .toString());
             }
         } catch (SQLException e) {
