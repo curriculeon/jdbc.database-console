@@ -51,49 +51,84 @@ public class PokemonDAOImpl implements PokemonDAO {
         }
 
         return false;
-}
+    }
 
     @Override
-    public boolean removePokemon(Pokemon pokemon) {
+    public boolean removePokemon(String pokemon) {
+        String query = "Delete * FROM databaseName.pokemonTable where name='"+pokemon+"'";
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            int numberOfRowsAffected = ps.executeUpdate();
+            if (numberOfRowsAffected == 1) {
+                return true;
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         return false;
     }
 
-    public void viewAllPokemon() {
+    public void viewAllPokemon() throws SQLException {
         String query = "SELECT * FROM databaseName.pokemonTable;";
+        ResultSet resultSet = connectorObj.executeQuery(connection, query);
+        printResults(resultSet);
+
+
+    }
+
+
+    @Override
+    public boolean updatePokemon(Integer pokemonId, String pokemonfield,String value) {
+        Integer newValue = null;
+        String query="";
+        if("primary-type".equalsIgnoreCase(pokemonfield) || "secondary-type".equalsIgnoreCase(pokemonfield)){
+            newValue=Integer.valueOf(value);
+            query = "Update databaseName.pokemonTable SET "+pokemonfield+"="+newValue+" where id=" + pokemonId;
+        }else {
+            query = "Update databaseName.pokemonTable SET " + pokemonfield + "=" + value + " where id=" + pokemonId;
+        }
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            int numberOfRowsAffected = ps.executeUpdate();
+            if (numberOfRowsAffected == 1) {
+                return true;
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public void getPokemon(String pokemonName) {
+        String query = "SELECT * FROM databaseName.pokemonTable where name='" + pokemonName + "'";
         ResultSet resultSet = connectorObj.executeQuery(connection, query);
         printResults(resultSet);
 
     }
 
 
-    @Override
-    public boolean updatePokemon(Pokemon pokemon) {
-        return false;
-    }
-
-    @Override
-    public Pokemon getPokemon() {
-        return null;
-    }
-
-
     public void printResults(ResultSet resultSet) {
         try {
-            for (Integer rowNumber = 1; resultSet.next(); rowNumber++) {
+
+            while (resultSet.next()) {
                 String firstColumnData = resultSet.getString(1);
                 String secondColumnData = resultSet.getString(2);
                 String thirdColumnData = resultSet.getString(3);
                 String fourthColumnData = resultSet.getString(4);
                 System.out.println(new StringJoiner("\n")
-                        .add("Row number = " + rowNumber.toString())
-                        .add("First Column = " + firstColumnData)
-                        .add("Second Column = " + secondColumnData)
-                        .add("Third column = " + thirdColumnData)
-                        .add("Fourth column = " + fourthColumnData)
+                        .add("id = " + firstColumnData)
+                        .add("name = " + secondColumnData)
+                        .add("primary type = " + thirdColumnData)
+                        .add("secondary type = " + fourthColumnData)
                         .toString());
             }
+
+
         } catch (SQLException e) {
-            throw new Error(e);
+            System.out.println("No such data found" + e.getStackTrace());
         }
     }
 }

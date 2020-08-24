@@ -12,10 +12,11 @@ import java.util.Scanner;
 public class MyObject implements Runnable {
     Scanner scanner = new Scanner(System.in);
     List<Pokemon> pokemonList = new ArrayList<>();
-    //PokemonDAOImpl pokemonDAO = new PokemonDAOImpl();
+
 
     public void run() {
-        promptUser();
+        PokemonDAOImpl pokemonDAO = new PokemonDAOImpl();
+        promptUser(pokemonDAO);
 
     }
 
@@ -68,59 +69,99 @@ public class MyObject implements Runnable {
         }
     }
 
-    public void promptUser() {
+    public void promptUser(PokemonDAOImpl pokemonDAO) {
         String option;
         do {
-            System.out.println("Do you want to add/remove/update/get/quit Pokemon details?");
-            option= scanner.nextLine();
+            System.out.println("Do you want to add/remove/update/get/view-all/quit Pokemon details?");
+            option = scanner.nextLine();
             switch (option) {
                 case "add":
-                    insert();
+                    insert(pokemonDAO);
                     break;
                 case "remove":
-                    removePokemonByName();
+                    removePokemonByName(pokemonDAO);
                     break;
                 case "update":
-                    updatePokemonById();
+                    updatePokemonById(pokemonDAO);
                     break;
                 case "get":
-                    getPokemonDetails();
+                    getPokemonDetails(pokemonDAO);
                     break;
-                case "quit": break;
+                case "view-all":
+                    viewAllPokemonDetails(pokemonDAO);
+                    break;
+                case "quit":
+                    break;
             }
-        }while(!("quit".equals(option)));
+        } while (!("quit".equals(option)));
 
     }
 
-    private void getPokemonDetails() {
+    private void viewAllPokemonDetails(PokemonDAOImpl pokemonDAO) {
+        try {
+            pokemonDAO.viewAllPokemon();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+    }
+
+    private void updatePokemonById(PokemonDAOImpl pokemonDAO) {
+        boolean success;
+        viewAllPokemonDetails(pokemonDAO);
+        System.out.println("Enter id of the pokemon character to be updated");
+        Integer pokemonId = scanner.nextInt();
+        System.out.println("select below options to change in pokemon character to be updated");
+        System.out.println("[name,primary-type,secondary-type]");
+        String pokemonField = scanner.nextLine();
+        if("name".equals(pokemonField)) {
+            System.out.println("Enter new name of the pokemon character to be updated");
+            String newName=scanner.nextLine();
+            success=pokemonDAO.updatePokemon(pokemonId, pokemonField,newName);
+        }else if("primary-type".equals(pokemonField)) {
+            System.out.println("Enter new primary-type of the pokemon character to be updated");
+            String newPrimaryType=scanner.nextLine();
+            success = pokemonDAO.updatePokemon(pokemonId, pokemonField,newPrimaryType);
+        }else {
+            pokemonField="secondary-type";
+            System.out.println("Enter new secondary-type of the pokemon character to be updated");
+            String newSecondaryType=scanner.nextLine();
+            success = pokemonDAO.updatePokemon(pokemonId, pokemonField,newSecondaryType);
+        }
+        if (success) {
+            System.out.println("Pokemon updated successfully");
+        }
+
+    }
+
+
+    private void getPokemonDetails(PokemonDAOImpl pokemonDAO) {
         System.out.println("Enter name of the pokemon character to be viewed");
         String pokemonName = scanner.nextLine();
-        //TODO
+        pokemonDAO.getPokemon(pokemonName);
     }
 
-    private void updatePokemonById() {
-        System.out.println("Enter Id of the pokemon character to be updated");
-        Integer pokemonName = scanner.nextInt();
-        //TODO
-    }
 
-    private void removePokemonByName() {
+    private void removePokemonByName(PokemonDAOImpl pokemonDAO) {
         System.out.println("Enter name of the pokemon character to be removed");
         String pokemonName = scanner.nextLine();
-        //TODO
+        boolean success=pokemonDAO.removePokemon(pokemonName);
+        if (success) {
+            System.out.println("Pokemon removed successfully");
+        }
     }
 
-    private void insert() {
+    private void insert(PokemonDAOImpl pokemonDAO) {
         System.out.println("Enter name of the pokemon character");
         String pokemonName = scanner.nextLine();
         System.out.println("Enter primary type of the pokemon character");
         Integer pokemonPrimaryType = Integer.valueOf(scanner.nextLine());
-        System.out.println("Enter primary type of the pokemon character");
+        System.out.println("Enter secondary type of the pokemon character");
         Integer pokemonSecondaryType = Integer.valueOf(scanner.nextLine());
 
         Pokemon pokemon = new Pokemon(pokemonName, pokemonPrimaryType, pokemonSecondaryType);
         pokemonList.add(pokemon);
-        boolean success =  new PokemonDAOImpl().addPokemon(pokemonList);
+        boolean success = pokemonDAO.addPokemon(pokemonList);
         if (success) {
             System.out.println("Pokemon stored successfully");
         }
