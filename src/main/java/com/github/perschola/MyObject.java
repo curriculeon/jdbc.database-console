@@ -1,32 +1,23 @@
 package com.github.perschola;
 
 import java.sql.*;
+
 import com.mysql.cj.jdbc.Driver;
-import java.util.StringJoiner;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 
 public class MyObject implements Runnable {
+    Scanner scanner = new Scanner(System.in);
+    List<Pokemon> pokemonList = new ArrayList<>();
+
+
     public void run() {
-        registerJDBCDriver();
-        Connection mysqlDbConnection = getConnection("mysql");
+        PokemonDAOImpl pokemonDAO = new PokemonDAOImpl();
+        promptUser(pokemonDAO);
 
-        executeStatement(mysqlDbConnection, "DROP DATABASE IF EXISTS databaseName;");
-        executeStatement(mysqlDbConnection, "CREATE DATABASE IF NOT EXISTS databaseName;");
-        executeStatement(mysqlDbConnection, "USE databaseName;");
-        executeStatement(mysqlDbConnection, new StringBuilder()
-                .append("CREATE TABLE IF NOT EXISTS databaseName.pokemonTable(")
-                .append("id int auto_increment primary key,")
-                .append("name text not null,")
-                .append("primary_type int not null,")
-                .append("secondary_type int null);").toString());
-
-        executeStatement(mysqlDbConnection, new StringBuilder()
-                .append("INSERT INTO databaseName.pokemonTable ")
-                .append("(id, name, primary_type, secondary_type)")
-                .append(" VALUES (12, 'Ivysaur', 3, 7);").toString());
-
-        String query = "SELECT * FROM databaseName.pokemonTable;";
-        ResultSet resultSet = executeQuery(mysqlDbConnection, query);
-        printResults(resultSet);
     }
 
     void registerJDBCDriver() {
@@ -40,7 +31,7 @@ public class MyObject implements Runnable {
 
     public Connection getConnection(String dbVendor) {
         String username = "root";
-        String password = "";
+        String password = "dbpassword";
         String url = "jdbc:" + dbVendor + "://127.0.0.1/";
         try {
             return DriverManager.getConnection(url, username, password);
@@ -59,23 +50,6 @@ public class MyObject implements Runnable {
         }
     }
 
-    public void printResults(ResultSet resultSet) {
-        try {
-            for (Integer rowNumber = 0; resultSet.next(); rowNumber++) {
-                String firstColumnData = resultSet.getString(1);
-                String secondColumnData = resultSet.getString(2);
-                String thirdColumnData = resultSet.getString(3);
-                System.out.println(new StringJoiner("\n")
-                        .add("Row number = " + rowNumber.toString())
-                        .add("First Column = " + firstColumnData)
-                        .add("Second Column = " + secondColumnData)
-                        .add("Third column = " + thirdColumnData)
-                        .toString());
-            }
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
-    }
 
     void executeStatement(Connection connection, String sqlStatement) {
         try {
@@ -94,5 +68,105 @@ public class MyObject implements Runnable {
             throw new Error(e);
         }
     }
+
+    public void promptUser(PokemonDAOImpl pokemonDAO) {
+        String option;
+        do {
+            System.out.println("Do you want to add/remove/update/get/view-all/quit Pokemon details?");
+            option = scanner.nextLine();
+            switch (option) {
+                case "add":
+                    insert(pokemonDAO);
+                    break;
+                case "remove":
+                    removePokemonByName(pokemonDAO);
+                    break;
+                case "update":
+                    updatePokemonById(pokemonDAO);
+                    break;
+                case "get":
+                    getPokemonDetails(pokemonDAO);
+                    break;
+                case "view-all":
+                    viewAllPokemonDetails(pokemonDAO);
+                    break;
+                case "quit":
+                    break;
+            }
+        } while (!("quit".equals(option)));
+
+    }
+
+    private void viewAllPokemonDetails(PokemonDAOImpl pokemonDAO) {
+        try {
+            pokemonDAO.viewAllPokemon();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+    }
+
+    private void updatePokemonById(PokemonDAOImpl pokemonDAO) {
+        boolean success;
+        viewAllPokemonDetails(pokemonDAO);
+        System.out.println("Enter id of the pokemon character to be updated");
+        Integer pokemonId = scanner.nextInt();
+        System.out.println("select below options to change in pokemon character to be updated");
+        System.out.println("[name,primary-type,secondary-type]");
+        String pokemonField = scanner.nextLine();
+        if("name".equals(pokemonField)) {
+            System.out.println("Enter new name of the pokemon character to be updated");
+            String newName=scanner.nextLine();
+            success=pokemonDAO.updatePokemon(pokemonId, pokemonField,newName);
+        }else if("primary-type".equals(pokemonField)) {
+            System.out.println("Enter new primary-type of the pokemon character to be updated");
+            String newPrimaryType=scanner.nextLine();
+            success = pokemonDAO.updatePokemon(pokemonId, pokemonField,newPrimaryType);
+        }else {
+            pokemonField="secondary-type";
+            System.out.println("Enter new secondary-type of the pokemon character to be updated");
+            String newSecondaryType=scanner.nextLine();
+            success = pokemonDAO.updatePokemon(pokemonId, pokemonField,newSecondaryType);
+        }
+        if (success) {
+            System.out.println("Pokemon updated successfully");
+        }
+
+    }
+
+
+    private void getPokemonDetails(PokemonDAOImpl pokemonDAO) {
+        System.out.println("Enter name of the pokemon character to be viewed");
+        String pokemonName = scanner.nextLine();
+        pokemonDAO.getPokemon(pokemonName);
+    }
+
+
+    private void removePokemonByName(PokemonDAOImpl pokemonDAO) {
+        System.out.println("Enter name of the pokemon character to be removed");
+        String pokemonName = scanner.nextLine();
+        boolean success=pokemonDAO.removePokemon(pokemonName);
+        if (success) {
+            System.out.println("Pokemon removed successfully");
+        }
+    }
+
+    private void insert(PokemonDAOImpl pokemonDAO) {
+        System.out.println("Enter name of the pokemon character");
+        String pokemonName = scanner.nextLine();
+        System.out.println("Enter primary type of the pokemon character");
+        Integer pokemonPrimaryType = Integer.valueOf(scanner.nextLine());
+        System.out.println("Enter secondary type of the pokemon character");
+        Integer pokemonSecondaryType = Integer.valueOf(scanner.nextLine());
+
+        Pokemon pokemon = new Pokemon(pokemonName, pokemonPrimaryType, pokemonSecondaryType);
+        pokemonList.add(pokemon);
+        boolean success = pokemonDAO.addPokemon(pokemonList);
+        if (success) {
+            System.out.println("Pokemon stored successfully");
+        }
+
+    }
+
 
 }
