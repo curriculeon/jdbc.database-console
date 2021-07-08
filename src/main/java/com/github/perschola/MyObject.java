@@ -41,7 +41,7 @@ public class MyObject implements Runnable {
     public Connection getConnection(String dbVendor) {
         String username = "root";
         String password = "";
-        String url = "jdbc:" + dbVendor + "://127.0.0.1/";
+        String url = "jdbc:" + dbVendor + "://localhost:3300";
         try {
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
