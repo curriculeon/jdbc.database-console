@@ -23,6 +23,10 @@ public class MyObject implements Runnable {
                 .append("INSERT INTO databaseName.pokemonTable ")
                 .append("(id, name, primary_type, secondary_type)")
                 .append(" VALUES (12, 'Ivysaur', 3, 7);").toString());
+        executeStatement(mysqlDbConnection, new StringBuilder()
+                .append("INSERT INTO databaseName.pokemonTable ")
+                .append("(id, name, primary_type, secondary_type)")
+                .append(" VALUES (13, 'Charmander', 4, 8);").toString());
 
         String query = "SELECT * FROM databaseName.pokemonTable;";
         ResultSet resultSet = executeQuery(mysqlDbConnection, query);
@@ -40,8 +44,8 @@ public class MyObject implements Runnable {
 
     public Connection getConnection(String dbVendor) {
         String username = "root";
-        String password = "";
-        String url = "jdbc:" + dbVendor + "://127.0.0.1/";
+        String password = "root";
+        String url = "jdbc:" + dbVendor + "://localhost:8889?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
         try {
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
